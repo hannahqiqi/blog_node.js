@@ -20,12 +20,19 @@ function find(arr, match) {
 
 var server = http.createServer(function (req, res) {
 	var pathname = url.parse(req.url).pathname;
+	console.log('pathname: ', pathname);
 	var rule = find(rules, function (rule) {
 		if (rule.path instanceof RegExp) {
-			return pathname.match(rule.path);
+			var matchResult = pathname.match(rule.path);
+			console.log("matchResult: ", matchResult);
+			if (matchResult) {
+				req.params = matchResult;
+			}
+			return matchResult;
 		}
 		return rule.path == pathname;
 	});
+	console.log('rule: ', rule);
 	var controller = rule && rule.controller || notFoundController;
 	controller(req, res);
 	
